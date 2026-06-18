@@ -1,4 +1,4 @@
-#process yamy → kanata 移行メモ
+# yamy → kanata 移行メモ
 
 窓使いの憂鬱(yamy)の設定を [kanata](https://github.com/jtroo/kanata) へ移植した記録。
 ハマった問題・原因・対策と、最終的な構成をまとめる。
@@ -37,7 +37,7 @@
 - OSを101にすると、JIS固有キー（変換/無変換/¥/カタカナ/半角全角）がUS配列で行き場を失い、`HANJA`/`YEN`/`K0xB1` 等のゴミに化けて不安定化した。
 - **対策**: OSはJISのまま。記号のJIS→US変換は kanata内で `(fork)` + `(unicode)` で再現（レイアウト非依存）。
 
-### 2-3. `[ERROR] Releasing in Windows: BACKSLASH`
+### 2-3. `[ERROR] Releasing in Windows: BACKSLASH`schtasks /run /tn kanata
 - **原因**: `windows-sync-keystates yes` が、tap-hold/unicode出力キー（例: `\`キー）を決定待ちの隙に誤って強制リリースしていた。
 - **対策**: `windows-sync-keystates` を撤去。英数固着はScancode Mapで解決済みなので、この保険はもう不要。
 
