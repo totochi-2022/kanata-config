@@ -1,0 +1,139 @@
+;; ============================================================
+;;  yamy (.mayu) 相当の設定を kanata に移植
+;;  正本: .mayu + 104on109.mayu （TAGA Nayuta 氏オリジナル）
+;;
+;;  方針（重要・前回からの変更）:
+;;    ★OSのキーボードレイアウトは JIS(106/109) のまま使う。
+;;      前回「OSを101(US)にする」案は誤り。yamyは一度もOSを偽らず、
+;;      109のまま記号キーをソフトで入れ替えていた(=104on109.mayu)。
+;;      OSを101にすると 変換/無変換/¥/カタカナ/半全 が US配列で行き場を
+;;      失い HANJA/YEN/K0xB1 等のゴミ化＋不安定の原因になっていた。
+;;    ・記号の JIS→US 入れ替えは kanata 内で (fork)+(unicode) で再現。
+;;      → レイアウト非依存。yamyの $COMMERCIAL_AT 等の文字出力に相当。
+;;    ・IMEは A-grv の小細工を廃止。変換/無変換キーを「そのまま」OSへ流す。
+;;      → IME側で「変換=ON / 無変換=OFF」に割当ててあれば従来通り動く。
+;;        (MS-IME/Google日本語入力の標準的な設定。もし切替らなければIME設定で割当を)
+;; ============================================================
+
+(defcfg
+  process-unmapped-keys yes   ;; defsrc に無いキーは素通り
+  concurrent-tap-hold yes     ;; SandS 等のロール入力を成立させる
+  danger-enable-cmd no        ;; 外部コマンド実行は無効（安全側）
+  ;; windows-sync-keystates は撤去。英数→CtrlはScancode Mapで解決済みで保険不要。
+  ;; この機能はtap-hold/unicode出力キー(例:\キー)を誤って強制リリースし
+  ;; "Releasing in Windows: BACKSLASH" 等のエラーと誤動作を起こすため。
+)
+
+;; tap / hold のタイミング(ms)
+(defvar
+  tt 200
+  ht 200
+)
+
+(defalias
+  ;; --- SandS: Space 単独=Space / 押しっぱ=Shift ---
+  sas (tap-hold $tt $ht spc lsft)
+
+  ;; --- mod0(nav)レイヤ: 変換/無変換 を押している間だけ nav ---
+  ;;     単独タップはキー自体(変換/無変換)をOSへ送る → IMEのON/OFFはIME設定任せ
+  m0h (tap-hold $tt $ht henk (layer-while-held nav))   ;; 変換
+  m0m (tap-hold $tt $ht mhnk (layer-while-held nav))   ;; 無変換
+
+  ;; --- 記号 JIS→US (104on109.mayu の def subst 相当) ---
+  ;;     (fork 通常 シフト時 (lsft rsft)) でシフト状態に応じて出し分け。
+  ;;     文字は (unicode ...) でレイアウト非依存に出力。
+  bq  (fork (unicode r#"`"#) (unicode r#"~"#) (lsft rsft))  ;; 半角/全角 → ` / ~
+  k2  (fork 2 (unicode r#"@"#) (lsft rsft))                ;; 2 / @
+  k6  (fork 6 (unicode r#"^"#) (lsft rsft))                ;; 6 / ^
+  k7  (fork 7 (unicode r#"&"#) (lsft rsft))                ;; 7 / &
+  k8  (fork 8 (unicode r#"*"#) (lsft rsft))                ;; 8 / *
+  k9  (fork 9 (unicode r#"("#) (lsft rsft))                ;; 9 / (
+  k0  (fork 0 (unicode r#")"#) (lsft rsft))                ;; 0 / )
+  kmn (fork (unicode r#"-"#) (unicode r#"_"#) (lsft rsft)) ;; - / _
+  keq (fork (unicode r#"="#) (unicode r#"+"#) (lsft rsft)) ;; JIS^キー → = / +
+  klb (fork (unicode r#"["#) (unicode r#"{"#) (lsft rsft)) ;; JIS@キー → [ / {
+  krb (fork (unicode r#"]"#) (unicode r#"}"#) (lsft rsft)) ;; JIS[キー → ] / }
+  ksc (fork (unicode r#";"#) (unicode r#":"#) (lsft rsft)) ;; ; / :
+
+  ;; --- 記号 兼 修飾(押しっぱ) ---
+  ;;   Colon(JIS:キー): tap=' / "  hold=Ctrl   (.mayu: mod Control += !!Colon)
+  ;;   ]キー(JIS]):     tap=\ / |  hold=Alt    (.mayu: mod Alt += !!RightSquareBracket)
+  apo (fork (unicode r#"'"#) (unicode r#"""#) (lsft rsft))
+  bsl (fork (unicode r#"\"#) (unicode r#"|"#) (lsft rsft))
+  col (tap-hold $tt $ht @apo lctl)
+  brk (tap-hold $tt $ht @bsl lalt)
+)
+
+;; 上書きする物理キーだけ列挙（kanata名は US配列スキャンコード基準）
+;;   grv =半角全角 / equal=JIS^ / lbrc=JIS@ / rbrc=JIS[ / bksl=JIS] / apos=JIS:
+(defsrc
+  spc
+  henk mhnk
+  grv  2 6 7 8 9 0  -  =  lbrc  rbrc  ;  apos  bksl
+  ralt rmet apps
+)
+
+(deflayermap (base)
+  ;; ★英数(CapsLock)→Ctrl は kanataで拾うと固着するためレジストリ(Scancode Map)へ移動。
+  ;;   caps_to_lctrl.reg を結合＋再起動で、物理英数キーはハード段階で本物のLeftCtrlになる。
+  ;;   kanataはそれを素通しするだけ（defsrcにcaps無し）。
+  spc   @sas        ;; SandS
+  henk  @m0h        ;; 変換   : tap=変換(IME) / hold=nav
+  mhnk  @m0m        ;; 無変換 : tap=無変換(IME) / hold=nav
+
+  ;; 記号 JIS→US
+  grv   @bq
+  2     @k2
+  6     @k6
+  7     @k7
+  8     @k8
+  9     @k9
+  0     @k0
+  -     @kmn
+  =     @keq        ;; JIS ^ キー
+  lbrc  @klb        ;; JIS @ キー
+  rbrc  @krb        ;; JIS [ キー
+  ;     @ksc        ;; ; キー
+  apos  @col        ;; JIS : キー (tap=' / hold=Ctrl)
+  bksl  @brk        ;; JIS ] キー (tap=\ / hold=Alt)
+
+  ;; 仮想マウスボタン
+  ralt  mlft        ;; 右Alt → 左クリック
+  rmet  mmid        ;; 右Win → 中クリック
+  apps  mrgt        ;; アプリケーションキー → 右クリック
+)
+
+;; 変換/無変換 を押している間のナビゲーション
+(deflayermap (nav)
+  h  left
+  j  down
+  k  up
+  l  rght
+  o  A-tab          ;; ウィンドウ切替
+  i  A-S-tab        ;; 逆方向
+  r  lrld           ;; 設定リロード
+  ;; mod0+c(CapsLock)は撤去。JISの英数キー=IMEトグルを兼ねるため日本語に化けるので。
+  ;; S-M0-hjkl(行選択)は Shift 物理併用で自動的に S-矢印 になる
+)
+
+;; 同時押し(chord): f+j を同時に押す → Esc
+;;   50ms以内に両方押されたら成立。all-released=両方離すまで保持。
+;;   末尾(nav)= navレイヤ(j=下矢印)では誤爆防止のため無効化。
+(defchordsv2
+  (f j) esc 50 all-released (nav)
+)
+
+;; ============================================================
+;;  未移植 / 要実機確認:
+;;   - ろ(_)キー → 右Shift  (104on109: *ReverseSolidus = *RightShift)
+;;       kanataのキー名が未確定。`kanata.exe --debug` でこのキーを押し、
+;;       出てくる名前を確認 → defsrc に追加し rsft を割当て。
+;;   - ¥キー: yamyでも未変更のため素通り（必要なら後で）。
+;;
+;;  動作確認ポイント（再起動後）:
+;;   1) OSのキーボードが JIS(106/109) に戻っているか
+;;   2) 英数→Ctrl が固着しないか（しばらく使ってCtrl固着が出ないか）
+;;      → 出るなら caps をkanataから外しレジストリ(Caps→Ctrl)へ移す
+;;   3) Shift+2=@ など記号がUS配列で出るか
+;;   4) 変換/無変換でIMEがON/OFFするか（しなければIME側で割当）
+;; ============================================================
