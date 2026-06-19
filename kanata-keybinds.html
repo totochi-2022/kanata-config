@@ -1,0 +1,124 @@
+<title>kanata キーバインド早見表</title>
+<style>
+  :root{
+    --bg:#0f1115; --panel:#171a21; --panel2:#1e222c; --line:#2a2f3a;
+    --fg:#e8eaed; --muted:#9aa3b2; --accent:#7cc4ff; --accent2:#ffd479;
+    --green:#7ee0a8; --pink:#ff9ecb; --purple:#c3a6ff;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+    line-height:1.5;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1000px;margin:0 auto;padding:28px 18px 60px}
+  header h1{font-size:1.6rem;margin:0 0 4px}
+  header p{margin:0;color:var(--muted);font-size:.9rem}
+  .note{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--accent);
+    border-radius:8px;padding:10px 14px;margin:18px 0;font-size:.85rem;color:var(--muted)}
+  .note b{color:var(--fg)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:16px;margin-top:8px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 16px 6px;overflow-x:auto}
+  .card.span{grid-column:1/-1}
+  .card h2{font-size:.95rem;margin:0 0 12px;display:flex;align-items:center;gap:8px}
+  .dot{width:9px;height:9px;border-radius:50%;flex:none}
+  table{width:100%;border-collapse:collapse;font-size:.86rem}
+  td{padding:6px 4px;border-bottom:1px solid var(--line);vertical-align:middle}
+  tr:last-child td{border-bottom:none}
+  td.act{color:var(--muted)}
+  .key{display:inline-block;background:var(--panel2);border:1px solid #353b48;
+    border-bottom-width:2px;border-radius:6px;padding:2px 8px;margin:1px 0;
+    font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-size:.82rem;color:var(--fg);white-space:nowrap}
+  .out{font-family:ui-monospace,Menlo,Consolas,monospace;color:var(--green)}
+  .plus{color:var(--muted);margin:0 3px;font-size:.8rem}
+  .tag{font-size:.7rem;color:var(--muted);border:1px solid var(--line);border-radius:5px;padding:1px 6px;margin-left:6px}
+  .sym{font-family:ui-monospace,Menlo,Consolas,monospace}
+  .symgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;font-size:.85rem}
+  .symcell{background:var(--panel2);border:1px solid var(--line);border-radius:7px;padding:7px 9px;display:flex;justify-content:space-between;align-items:center}
+  .symcell .k{color:var(--muted);font-family:ui-monospace,monospace}
+  .symcell .v{font-family:ui-monospace,monospace}
+  .symcell .v .sh{color:var(--accent2)}
+  .footer{margin-top:22px;color:var(--muted);font-size:.78rem;border-top:1px solid var(--line);padding-top:12px}
+  .wip{color:var(--pink)}
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>⌨️ kanata キーバインド早見表</h1>
+    <p>yamy(.mayu / 104on109.mayu) からの移植 ／ OS は JIS(109) のまま使用</p>
+  </header>
+
+  <div class="note">
+    <b>前提</b>：物理キーは日本語(JIS)配列。記号は kanata 内で US 配列に変換して出力。
+    <b>IME</b> の ON/OFF は 変換/無変換キー（IME 側で「変換=ON・無変換=OFF」に割当）。
+    <b>英数→Ctrl</b> だけは OS のレジストリ(Scancode Map)で実現（kanata 管轄外）。
+  </div>
+
+  <div class="grid">
+
+    <!-- 修飾・特殊 -->
+    <div class="card">
+      <h2><span class="dot" style="background:var(--accent)"></span>修飾・特殊キー（tap / hold）</h2>
+      <table>
+        <tr><td><span class="key">英数 (CapsLock)</span></td><td class="act">→ <span class="out">左Ctrl</span> <span class="tag">OS層/Scancode Map</span></td></tr>
+        <tr><td><span class="key">Space</span></td><td class="act">タップ=<span class="out">空白</span> ／ 長押し=<span class="out">Shift</span> <span class="tag">SandS</span></td></tr>
+        <tr><td><span class="key">変換</span></td><td class="act">タップ=<span class="out">変換(IME)</span> ／ 長押し=<span class="out">navレイヤ</span></td></tr>
+        <tr><td><span class="key">無変換</span></td><td class="act">タップ=<span class="out">無変換(IME)</span> ／ 長押し=<span class="out">navレイヤ</span></td></tr>
+        <tr><td><span class="key">: キー</span></td><td class="act">タップ=<span class="out">' / "</span> ／ 長押し=<span class="out">Ctrl</span></td></tr>
+        <tr><td><span class="key">] キー</span></td><td class="act">タップ=<span class="out">\ / |</span> ／ 長押し=<span class="out">Alt</span></td></tr>
+      </table>
+    </div>
+
+    <!-- nav -->
+    <div class="card">
+      <h2><span class="dot" style="background:var(--purple)"></span>nav レイヤ<span class="tag">変換 or 無変換 を押しながら</span></h2>
+      <table>
+        <tr><td><span class="key">h</span><span class="key">j</span><span class="key">k</span><span class="key">l</span></td><td class="act"><span class="out">← ↓ ↑ →</span></td></tr>
+        <tr><td><span class="key">Shift</span><span class="plus">+</span><span class="key">h/j/k/l</span></td><td class="act">範囲選択（<span class="out">Shift+矢印</span>）</td></tr>
+        <tr><td><span class="key">o</span></td><td class="act">ウィンドウ切替（<span class="out">Alt+Tab</span>）</td></tr>
+        <tr><td><span class="key">i</span></td><td class="act">逆方向（<span class="out">Alt+Shift+Tab</span>）</td></tr>
+        <tr><td><span class="key">r</span></td><td class="act">kanata 設定リロード</td></tr>
+      </table>
+    </div>
+
+    <!-- chord + mouse + 緊急 -->
+    <div class="card">
+      <h2><span class="dot" style="background:var(--green)"></span>同時押し・マウス・緊急</h2>
+      <table>
+        <tr><td><span class="key">f</span><span class="plus">+</span><span class="key">j</span></td><td class="act">→ <span class="out">Esc</span> <span class="tag">50ms以内 / nav中は無効</span></td></tr>
+        <tr><td><span class="key">右Alt</span></td><td class="act">左クリック</td></tr>
+        <tr><td><span class="key">右Win</span></td><td class="act">中クリック</td></tr>
+        <tr><td><span class="key">アプリケーションキー</span></td><td class="act">右クリック</td></tr>
+        <tr><td><span class="key">左Ctrl</span><span class="plus">+</span><span class="key">Space</span><span class="plus">+</span><span class="key">Esc</span></td><td class="act"><span class="wip">kanata 強制終了</span></td></tr>
+      </table>
+    </div>
+
+    <!-- 記号 -->
+    <div class="card span">
+      <h2><span class="dot" style="background:var(--accent2)"></span>記号 JIS→US 配列 <span class="tag">通常 / Shift</span></h2>
+      <div class="symgrid">
+        <div class="symcell"><span class="k">半角/全角</span><span class="v">` <span class="sh">~</span></span></div>
+        <div class="symcell"><span class="k">2</span><span class="v">2 <span class="sh">@</span></span></div>
+        <div class="symcell"><span class="k">6</span><span class="v">6 <span class="sh">^</span></span></div>
+        <div class="symcell"><span class="k">7</span><span class="v">7 <span class="sh">&amp;</span></span></div>
+        <div class="symcell"><span class="k">8</span><span class="v">8 <span class="sh">*</span></span></div>
+        <div class="symcell"><span class="k">9</span><span class="v">9 <span class="sh">(</span></span></div>
+        <div class="symcell"><span class="k">0</span><span class="v">0 <span class="sh">)</span></span></div>
+        <div class="symcell"><span class="k">-</span><span class="v">- <span class="sh">_</span></span></div>
+        <div class="symcell"><span class="k">^ キー</span><span class="v">= <span class="sh">+</span></span></div>
+        <div class="symcell"><span class="k">@ キー</span><span class="v">[ <span class="sh">{</span></span></div>
+        <div class="symcell"><span class="k">[ キー</span><span class="v">] <span class="sh">}</span></span></div>
+        <div class="symcell"><span class="k">; キー</span><span class="v">; <span class="sh">:</span></span></div>
+        <div class="symcell"><span class="k">: キー</span><span class="v">' <span class="sh">"</span></span></div>
+        <div class="symcell"><span class="k">] キー</span><span class="v">\ <span class="sh">|</span></span></div>
+      </div>
+      <p style="color:var(--muted);font-size:.78rem;margin:12px 2px 6px">
+        ※ 1/3/4/5 の Shift（! # $ %）は JIS と US で同じなので変換不要。<span class="sym">: キー</span>と<span class="sym">] キー</span>は長押しで Ctrl/Alt も兼ねる。
+      </p>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    <b class="wip">未実装 / 要確認</b>：ろ(_)キー→右Shift（kanataのキー名未確定）、¥キー（素通り）。
+    　設定本体: <span class="sym">kanata.kbd</span> ／ 詳細経緯: <span class="sym">README.md</span>
+  </div>
+</div>
