@@ -37,7 +37,7 @@
 - OSを101にすると、JIS固有キー（変換/無変換/¥/カタカナ/半角全角）がUS配列で行き場を失い、`HANJA`/`YEN`/`K0xB1` 等のゴミに化けて不安定化した。
 - **対策**: OSはJISのまま。記号のJIS→US変換は kanata内で `(fork)` + `(unicode)` で再現（レイアウト非依存）。
 
-### 2-3. `[ERROR] Releasing in Windows: BACKSLASH`schtasks /run /tn kanata
+### 2-3. `[ERROR] Releasing in Windows: BACKSLASH`
 - **原因**: `windows-sync-keystates yes` が、tap-hold/unicode出力キー（例: `\`キー）を決定待ちの隙に誤って強制リリースしていた。
 - **対策**: `windows-sync-keystates` を撤去。英数固着はScancode Mapで解決済みなので、この保険はもう不要。
 
@@ -64,7 +64,7 @@
 | 英数(CapsLock) | **左Ctrl**（Scancode Mapで実現。kanata管轄外） |
 | Space | **SandS**（タップ=空白 / 長押し=Shift） |
 | 変換 | タップ=変換(IME) / 長押し=navレイヤ |
-| 無変換 | タップ=無変換(IME) / 長押し=navレイヤ |
+| 無変換 | タップ=無変換(IMEオフ)+Esc / 長押し=navレイヤ |
 | `:`キー | タップ=`'`/`"` / 長押し=Ctrl |
 | `]`キー | タップ=`\`/`\|` / 長押し=Alt |
 | 右Alt | 左クリック |

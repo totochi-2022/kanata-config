@@ -36,8 +36,8 @@
 
   ;; --- mod0(nav)レイヤ: 変換/無変換 を押している間だけ nav ---
   ;;     単独タップはキー自体(変換/無変換)をOSへ送る → IMEのON/OFFはIME設定任せ
-  m0h (tap-hold $tt $ht henk (layer-while-held nav))   ;; 変換
-  m0m (tap-hold $tt $ht mhnk (layer-while-held nav))   ;; 無変換
+  m0h (tap-hold $tt $ht henk (layer-while-held nav))            ;; 変換  : tap=変換(IME) / hold=nav
+  m0m (tap-hold $tt $ht (macro mhnk esc) (layer-while-held nav)) ;; 無変換: tap=無変換(IMEオフ)+Esc / hold=nav
 
   ;; --- 記号 JIS→US (104on109.mayu の def subst 相当) ---
   ;;     (fork 通常 シフト時 (lsft rsft)) でシフト状態に応じて出し分け。
