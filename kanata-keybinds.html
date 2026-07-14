@@ -60,16 +60,16 @@
       <table>
         <tr><td><span class="key">英数 (CapsLock)</span></td><td class="act">→ <span class="out">左Ctrl</span> <span class="tag">OS層/Scancode Map</span></td></tr>
         <tr><td><span class="key">Space</span></td><td class="act">タップ=<span class="out">空白</span> ／ 長押し=<span class="out">Shift</span> <span class="tag">SandS</span></td></tr>
-        <tr><td><span class="key">変換</span></td><td class="act">タップ=<span class="out">変換(IME)</span> ／ 長押し=<span class="out">navレイヤ</span></td></tr>
-        <tr><td><span class="key">無変換</span></td><td class="act">タップ=<span class="out">無変換(IMEオフ)+Esc</span> ／ 長押し=<span class="out">navレイヤ</span></td></tr>
+        <tr><td><span class="key">変換</span></td><td class="act">タップ=<span class="out">変換(IME)</span> ／ 長押し=<span class="out">nav(矢印)</span></td></tr>
+        <tr><td><span class="key">無変換</span></td><td class="act">タップ=<span class="out">無変換(IMEオフ)+Esc</span> ／ 長押し=<span class="out">nav2(nvim窓移動)</span></td></tr>
         <tr><td><span class="key">: キー</span></td><td class="act">タップ=<span class="out">' / "</span> ／ 長押し=<span class="out">Ctrl</span></td></tr>
         <tr><td><span class="key">] キー</span></td><td class="act">タップ=<span class="out">\ / |</span> ／ 長押し=<span class="out">Alt</span></td></tr>
       </table>
     </div>
 
-    <!-- nav -->
+    <!-- nav (変換) -->
     <div class="card">
-      <h2><span class="dot" style="background:var(--purple)"></span>nav レイヤ<span class="tag">変換 or 無変換 を押しながら</span></h2>
+      <h2><span class="dot" style="background:var(--purple)"></span>nav レイヤ<span class="tag">変換 を押しながら＝矢印</span></h2>
       <table>
         <tr><td><span class="key">h</span><span class="key">j</span><span class="key">k</span><span class="key">l</span></td><td class="act"><span class="out">← ↓ ↑ →</span></td></tr>
         <tr><td><span class="key">Shift</span><span class="plus">+</span><span class="key">h/j/k/l</span></td><td class="act">範囲選択（<span class="out">Shift+矢印</span>）</td></tr>
@@ -77,6 +77,19 @@
         <tr><td><span class="key">i</span></td><td class="act">逆方向（<span class="out">Alt+Shift+Tab</span>）</td></tr>
         <tr><td><span class="key">r</span></td><td class="act">kanata 設定リロード</td></tr>
       </table>
+    </div>
+
+    <!-- nav2 (無変換) -->
+    <div class="card">
+      <h2><span class="dot" style="background:var(--pink)"></span>nav2 レイヤ<span class="tag">無変換 を押しながら＝nvim窓移動</span></h2>
+      <table>
+        <tr><td><span class="key">h</span><span class="key">j</span><span class="key">k</span><span class="key">l</span></td><td class="act">nvim の <span class="out">左 / 下 / 上 / 右</span>ウィンドウへ</td></tr>
+        <tr><td><span class="key">o</span> / <span class="key">i</span></td><td class="act">ウィンドウ切替 / 逆方向</td></tr>
+        <tr><td><span class="key">r</span></td><td class="act">kanata 設定リロード</td></tr>
+      </table>
+      <p style="color:var(--muted);font-size:.78rem;margin:8px 2px 6px">
+        kanata が <span class="sym">Shift+F1→文字</span> を送出 → nvim で <span class="sym">&lt;F13&gt;h</span>/<span class="sym">&lt;S-F1&gt;h</span>（端末差吸収）を <span class="sym">&lt;C-w&gt;h</span> に。F13系は物理キー非搭載＝他アプリ非干渉、WT/ttyd両対応。
+      </p>
     </div>
 
     <!-- chord + mouse + 緊急 -->

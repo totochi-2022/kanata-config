@@ -37,7 +37,7 @@
   ;; --- mod0(nav)レイヤ: 変換/無変換 を押している間だけ nav ---
   ;;     単独タップはキー自体(変換/無変換)をOSへ送る → IMEのON/OFFはIME設定任せ
   m0h (tap-hold $tt $ht henk (layer-while-held nav))            ;; 変換  : tap=変換(IME) / hold=nav
-  m0m (tap-hold $tt $ht (macro mhnk esc) (layer-while-held nav)) ;; 無変換: tap=無変換(IMEオフ)+Esc / hold=nav
+  m0m (tap-hold $tt $ht (macro mhnk esc) (layer-while-held nav2)) ;; 無変換: tap=無変換(IMEオフ)+Esc / hold=nav2(窓移動)
 
   ;; --- 記号 JIS→US (104on109.mayu の def subst 相当) ---
   ;;     (fork 通常 シフト時 (lsft rsft)) でシフト状態に応じて出し分け。
@@ -114,6 +114,22 @@
   r  lrld           ;; 設定リロード
   ;; mod0+c(CapsLock)は撤去。JISの英数キー=IMEトグルを兼ねるため日本語に化けるので。
   ;; S-M0-hjkl(行選択)は Shift 物理併用で自動的に S-矢印 になる
+)
+
+;; 無変換 を押している間: hjkl を F13-F16 に（nvim側で <C-w>hjkl=窓移動 に割当）
+;;   F13+ は物理キーに無い＝他アプリと衝突しない“nvim専用チャンネル”。
+;; プレフィックスに Shift+F1 を送る。1つの送出で両端末カバー:
+;;   WT   → nvim には <F13> として届く（Shift+F1 の系列を F13 と解釈）
+;;   ttyd → nvim には <S-F1> として届く
+;; nvim側で <F13>h と <S-F1>h の両方を割当てておけば、どちらでも窓移動。
+(deflayermap (nav2)
+  h  (macro S-f1 h) ;; nvim: <F13>h / <S-F1>h → 左窓
+  j  (macro S-f1 j) ;; nvim: <F13>j / <S-F1>j → 下窓
+  k  (macro S-f1 k) ;; nvim: <F13>k / <S-F1>k → 上窓
+  l  (macro S-f1 l) ;; nvim: <F13>l / <S-F1>l → 右窓
+  o  A-tab          ;; ウィンドウ切替（変換側と同じ）
+  i  A-S-tab        ;; 逆方向
+  r  lrld           ;; 設定リロード
 )
 
 ;; 同時押し(chord): f+j を同時に押す → Esc
