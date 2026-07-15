@@ -112,6 +112,11 @@
   o  A-tab          ;; ウィンドウ切替
   i  A-S-tab        ;; 逆方向
   r  lrld           ;; 設定リロード
+  esc (macro S-f1 esc)  ;; 変換+Esc → nvim端末モードで literal Esc（<F13>/<S-F1>プレフィックス）
+  c   (macro S-f1 c)    ;; 変換+c → nvim: ClaudePick(Claudeタスク一覧)。端末モードからも
+  n   (macro S-f1 n)    ;; 変換+n → nvim: ClaudeAttnFocus(Claude待ちペインへ)
+  m   (macro S-f1 m)    ;; 変換+m → nvim: ClaudeAttnSwitch(N代替。Claude待ちを現窓に)
+  e   (macro S-f1 e)    ;; 変換+e → nvim: 現バッファをexplorerで開く(<Leader>E相当)
   ;; mod0+c(CapsLock)は撤去。JISの英数キー=IMEトグルを兼ねるため日本語に化けるので。
   ;; S-M0-hjkl(行選択)は Shift 物理併用で自動的に S-矢印 になる
 )
@@ -130,6 +135,11 @@
   o  A-tab          ;; ウィンドウ切替（変換側と同じ）
   i  A-S-tab        ;; 逆方向
   r  lrld           ;; 設定リロード
+  esc (macro S-f1 esc)  ;; 無変換+Esc → nvim端末モードで literal Esc（変換側と鏡写し）
+  c   (macro S-f1 c)    ;; 無変換+c → nvim: ClaudePick（変換側と鏡写し）
+  n   (macro S-f1 n)    ;; 無変換+n → ClaudeAttnFocus（変換側と鏡写し）
+  m   (macro S-f1 m)    ;; 無変換+m → ClaudeAttnSwitch（変換側と鏡写し）
+  e   (macro S-f1 e)    ;; 無変換+e → explorerで開く（変換側と鏡写し）
 )
 
 ;; 同時押し(chord): f+j を同時に押す → Esc
