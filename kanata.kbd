@@ -36,8 +36,10 @@
 
   ;; --- mod0(nav)レイヤ: 変換/無変換 を押している間だけ nav ---
   ;;     単独タップはキー自体(変換/無変換)をOSへ送る → IMEのON/OFFはIME設定任せ
-  m0h (tap-hold $tt $ht henk (layer-while-held nav))            ;; 変換  : tap=変換(IME) / hold=nav
-  m0m (tap-hold $tt $ht (macro mhnk esc) (layer-while-held nav2)) ;; 無変換: tap=無変換(IMEオフ)+Esc / hold=nav2(窓移動)
+  ;; tap は IMEキー＋「IME状態マーカー」を nvim へ送る(状態表示用・全部ファンクションキー)。
+  ;;   変換=toggle → S-f9(<F21>/<S-F9>) / 無変換=OFF → S-f8(<F20>/<S-F8>) / カナ=ON → S-f7(後で追加)
+  m0h (tap-hold $tt $ht (macro henk S-f9) (layer-while-held nav))        ;; 変換  : tap=変換(IME toggle)+marker / hold=nav
+  m0m (tap-hold $tt $ht (macro mhnk esc S-f8) (layer-while-held nav2))   ;; 無変換: tap=無変換(IME OFF)+Esc+marker / hold=nav2(窓移動)
 
   ;; --- 記号 JIS→US (104on109.mayu の def subst 相当) ---
   ;;     (fork 通常 シフト時 (lsft rsft)) でシフト状態に応じて出し分け。
