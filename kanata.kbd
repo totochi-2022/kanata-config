@@ -112,11 +112,15 @@
   o  A-tab          ;; ウィンドウ切替
   i  A-S-tab        ;; 逆方向
   r  lrld           ;; 設定リロード
-  esc (macro S-f1 esc)  ;; 変換+Esc → nvim端末モードで literal Esc（<F13>/<S-F1>プレフィックス）
-  c   (macro S-f1 c)    ;; 変換+c → nvim: ClaudePick(Claudeタスク一覧)。端末モードからも
-  n   (macro S-f1 n)    ;; 変換+n → nvim: ClaudeAttnFocus(Claude待ちペインへ)
-  m   (macro S-f1 m)    ;; 変換+m → nvim: ClaudeAttnSwitch(N代替。Claude待ちを現窓に)
-  e   (macro S-f1 e)    ;; 変換+e → nvim: 現バッファをexplorerで開く(<Leader>E相当)
+  ;; Claude系/explorer/端末Esc: F13〜F15 の「3打」で送る。全キーがファンクションキー＝
+  ;; IME もブラウザも絶対に奪わない → 日本語入力中でも WT/ttyd/全モードで確実に効く。
+  ;; 押す側は 変換+<文字> のまま(kanataが内部で3打送るだけ)。
+  ;; 体系: F13(nvim leader) → 第2キー(F14=Claude群 / F15=ツール群) → 第3キー(選択)。27枠まで拡張可。
+  c   (macro S-f1 S-f2 S-f1)  ;; 変換+c   → nvim: ClaudePick(Claudeタスク一覧)  [F13 F14 F13]
+  n   (macro S-f1 S-f2 S-f2)  ;; 変換+n   → nvim: ClaudeAttnFocus(Claude待ちへ)  [F13 F14 F14]
+  m   (macro S-f1 S-f2 S-f3)  ;; 変換+m   → nvim: ClaudeAttnSwitch(N代替)        [F13 F14 F15]
+  e   (macro S-f1 S-f3 S-f1)  ;; 変換+e   → nvim: explorer(cwd)で開く            [F13 F15 F13]
+  esc (macro S-f1 S-f3 S-f2)  ;; 変換+Esc → nvim: 端末へ literal Esc            [F13 F15 F14]
   ;; mod0+c(CapsLock)は撤去。JISの英数キー=IMEトグルを兼ねるため日本語に化けるので。
   ;; S-M0-hjkl(行選択)は Shift 物理併用で自動的に S-矢印 になる
 )
@@ -135,11 +139,12 @@
   o  A-tab          ;; ウィンドウ切替（変換側と同じ）
   i  A-S-tab        ;; 逆方向
   r  lrld           ;; 設定リロード
-  esc (macro S-f1 esc)  ;; 無変換+Esc → nvim端末モードで literal Esc（変換側と鏡写し）
-  c   (macro S-f1 c)    ;; 無変換+c → nvim: ClaudePick（変換側と鏡写し）
-  n   (macro S-f1 n)    ;; 無変換+n → ClaudeAttnFocus（変換側と鏡写し）
-  m   (macro S-f1 m)    ;; 無変換+m → ClaudeAttnSwitch（変換側と鏡写し）
-  e   (macro S-f1 e)    ;; 無変換+e → explorerで開く（変換側と鏡写し）
+  ;; 変換側と鏡写し。F13〜F15 の3打(全ファンクションキー)=IME/ブラウザ無敵。
+  c   (macro S-f1 S-f2 S-f1)  ;; 無変換+c   → nvim: ClaudePick          [F13 F14 F13]
+  n   (macro S-f1 S-f2 S-f2)  ;; 無変換+n   → nvim: ClaudeAttnFocus     [F13 F14 F14]
+  m   (macro S-f1 S-f2 S-f3)  ;; 無変換+m   → nvim: ClaudeAttnSwitch    [F13 F14 F15]
+  e   (macro S-f1 S-f3 S-f1)  ;; 無変換+e   → nvim: explorer(cwd)       [F13 F15 F13]
+  esc (macro S-f1 S-f3 S-f2)  ;; 無変換+Esc → nvim: 端末へ literal Esc [F13 F15 F14]
 )
 
 ;; 同時押し(chord): f+j を同時に押す → Esc
