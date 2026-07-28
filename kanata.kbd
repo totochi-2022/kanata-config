@@ -66,11 +66,17 @@
   brk (tap-hold $tt $ht @bsl lalt)
 )
 
+;; カナ(カタカナ/ひらがな)キーは kanata に config 名が無いので名付ける(scancode 0x70=112)。
+;; IME状態表示用に「カナ=IME ON」のマーカーを nvim へ送るため defsrc に載せる。
+(deflocalkeys-win
+  kana 112
+)
+
 ;; 上書きする物理キーだけ列挙（kanata名は US配列スキャンコード基準）
 ;;   grv =半角全角 / equal=JIS^ / lbrc=JIS@ / rbrc=JIS[ / bksl=JIS] / apos=JIS:
 (defsrc
   spc
-  henk mhnk
+  henk mhnk kana
   grv  2 6 7 8 9 0  -  =  lbrc  rbrc  ;  apos  bksl
   ralt rmet apps
 )
@@ -82,6 +88,7 @@
   spc   @sas        ;; SandS
   henk  @m0h        ;; 変換   : tap=変換(IME) / hold=nav
   mhnk  @m0m        ;; 無変換 : tap=無変換(IME) / hold=nav
+  kana  (macro kana S-f7)  ;; カナ : カナ(IME ON)を送る＋marker S-f7(<F19>/<S-F7>)=nvimへ「ON」通知
 
   ;; 記号 JIS→US
   grv   @bq
