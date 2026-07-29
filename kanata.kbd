@@ -39,7 +39,7 @@
   ;; tap は IMEキー＋「IME状態マーカー」を nvim へ送る(状態表示用・全部ファンクションキー)。
   ;;   変換=toggle → S-f9(<F21>/<S-F9>) / 無変換=OFF → S-f8(<F20>/<S-F8>) / カナ=ON → S-f7(後で追加)
   m0h (tap-hold $tt $ht (macro henk S-f9) (layer-while-held nav))        ;; 変換  : tap=変換(IME toggle)+marker / hold=nav
-  m0m (tap-hold $tt $ht (macro mhnk esc S-f8) (layer-while-held nav2))   ;; 無変換: tap=無変換(IME OFF)+Esc+marker / hold=nav2(窓移動)
+  m0m (tap-hold $tt $ht (macro mhnk S-f8) (layer-while-held nav2))   ;; 無変換: tap=無変換(IME OFF)+marker(S-f8=F20)。Escは送らずnvim側でF20受信時にstopinsert+補完消し(他アプリへの副作用回避)
 
   ;; --- 記号 JIS→US (104on109.mayu の def subst 相当) ---
   ;;     (fork 通常 シフト時 (lsft rsft)) でシフト状態に応じて出し分け。
@@ -66,17 +66,18 @@
   brk (tap-hold $tt $ht @bsl lalt)
 )
 
-;; カナ(カタカナ/ひらがな)キーは kanata に config 名が無いので名付ける(scancode 0x70=112)。
-;; IME状態表示用に「カナ=IME ON」のマーカーを nvim へ送るため defsrc に載せる。
-(deflocalkeys-win
-  kana 112
+;; カナ(カタカナ/ひらがな)キー: winIOv2 バイナリ + deflocalkeys-winiov2 で掴む。
+;;   winIOv2 は VK コードで指定(LLHOOK の scancode ではない)。カナ = VK_DBE_KATAKANA = 0xF1 = 241。
+;;   ※ kanata_windows_tty_winIOv2_x64.exe (v1.12.0, #1893含む) で起動すること。
+(deflocalkeys-winiov2
+  kata 241
 )
 
 ;; 上書きする物理キーだけ列挙（kanata名は US配列スキャンコード基準）
 ;;   grv =半角全角 / equal=JIS^ / lbrc=JIS@ / rbrc=JIS[ / bksl=JIS] / apos=JIS:
 (defsrc
   spc
-  henk mhnk kana
+  henk mhnk kata
   grv  2 6 7 8 9 0  -  =  lbrc  rbrc  ;  apos  bksl
   ralt rmet apps
 )
@@ -88,7 +89,7 @@
   spc   @sas        ;; SandS
   henk  @m0h        ;; 変換   : tap=変換(IME) / hold=nav
   mhnk  @m0m        ;; 無変換 : tap=無変換(IME) / hold=nav
-  kana  (macro kana S-f7)  ;; カナ : カナ(IME ON)を送る＋marker S-f7(<F19>/<S-F7>)=nvimへ「ON」通知
+  kata  (macro S-f7 kata)  ;; カナ: ONマーカー(S-f7=WTで<F19>)を先送り→kata(実カナキー=IME ON)。順序でmarkerがIMEに飲まれるのを回避
 
   ;; 記号 JIS→US
   grv   @bq
