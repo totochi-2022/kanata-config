@@ -4,7 +4,11 @@
 ハマった問題・原因・対策と、最終的な構成をまとめる。
 
 - 対象環境: Windows + 日本語(JIS 106/109)キーボード
-- kanata: v1.11.0（GUI版 `kanata.exe`、IOバックエンドは LLHOOK+SendInput）
+- kanata: **v1.12.0 GUI版・winIOv2 ビルド**（`kanata_v112_gui_winIOv2.exe`）
+  - DL元: https://github.com/jtroo/kanata/releases → `kanata_gui_winIOv2.exe` 系アセット
+  - **winIOv2 必須**: カナ(カタカナ/ひらがな)キーは LLHOOK 標準ビルドでは原理的に捕捉できない。
+    winIOv2 ビルド＋`(deflocalkeys-winiov2 kata 241)`（VK_DBE_KATAKANA=0xF1）で捕捉している（kanata issue #1870 / PR #1893 参照）。
+  - 起動ログに `using LLHOOK+SendInput` と出るが winIOv2 でも正常（入力読取りは LLHOOK 経由、処理が VK ベース）。
 - 正本にした yamy 設定: `.mayu`（キーマップ本体）+ `104on109.mayu`（JIS→US記号変換）
 
 ---
@@ -113,14 +117,19 @@ ttyd(ブラウザ) の両方で動く。プレフィックスを増やせば nvi
 | ファイル | 役割 |
 |---|---|
 | `kanata.kbd` | kanata設定本体 |
-| `kanata.exe` | kanata（GUI版、常駐用） |
-| `kanata_windows_tty_winIOv2_x64.exe` | TTY版（`--check`/`--debug`でログ確認用） |
+| `kanata_v112_gui_winIOv2.exe` | **常駐の実体**（v1.12 GUI winIOv2。自動起動タスクが直接実行。消さない） |
+| `kanata_v112_winIOv2.exe` | TTY版 v1.12 winIOv2（`--debug` でログ確認用） |
+| `kanata.exe` | 旧・常駐用（v1.11相当 GUI winIOv2。現在未使用） |
+| `kanata_windows_tty_winIOv2_x64.exe` | 旧TTY版（現在未使用） |
 | `caps_to_lctrl.reg` | 英数→LeftCtrl の Scancode Map（要再起動） |
 | `caps_undo.reg` | 上記の取り消し（要再起動） |
-| `kanata_task.xml` | ログオン時自動起動タスク定義 |
-| `kanata.bat` | `kanata.exe --cfg kanata.kbd` 直叩き |
+| `kanata_task.xml` | ログオン時自動起動タスク定義（Exec=GUI版winIOv2） |
+| `set_kanata_gui.ps1` | 登録済みタスクの Exec を GUI版winIOv2 に差し替える（管理者PowerShell） |
+| `kanata.bat` | `kanata.exe --cfg kanata.kbd` 直叩き（旧exe参照。現在未使用） |
 | `run_kanata.bat` | 手動起動用（UAC昇格して `kanata.bat` 実行） |
 | `run_kanata_debug.bat` | デバッグ起動（`kanata_log.txt` に記録） |
+
+※ `*.exe` は .gitignore で追跡外。別PCではDL元から取得してこの名前にリネームする。
 
 ---
 
@@ -133,7 +142,8 @@ ttyd(ブラウザ) の両方で動く。プレフィックスを増やせば nvi
 
 ### 設定変更後の反映
 - `kanata.kbd` を編集 → kanataを再起動（**再起動不要**、プロセス再起動だけ）。
-- 反映前に検証: `kanata_windows_tty_winIOv2_x64.exe --cfg kanata.kbd --check`
+- 検証: `kanata_v112_winIOv2.exe --cfg kanata.kbd --check`
+  （ただし **`--check` は壊れた config でも exit 0 を返すことがある**＝当てにならない。確実なのは実起動）
 
 ### トラブル時のログ取得
 1. 動いているkanataを停止
@@ -147,6 +157,8 @@ schtasks /create /tn kanata /xml "C:\bin\yamy\kanata\kanata_task.xml" /f   # 登
 schtasks /change /tn yamy /disable                                          # 旧yamy自動起動を無効化
 schtasks /run /tn kanata                                                    # 即起動テスト
 ```
+- 実行exeだけ差し替えたい時は管理者PowerShellで `set_kanata_gui.ps1`（`Set-ScheduledTask` で Action を更新）。
+- 管理者起動の kanata は非管理者からは kill 不可。停止はトレイアイコン→Exit か、管理者プロンプトで taskkill。
 
 ---
 
