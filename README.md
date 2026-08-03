@@ -123,7 +123,8 @@ ttyd(ブラウザ) の両方で動く。プレフィックスを増やせば nvi
 | `kanata_windows_tty_winIOv2_x64.exe` | 旧TTY版（現在未使用） |
 | `caps_to_lctrl.reg` | 英数→LeftCtrl の Scancode Map（要再起動） |
 | `caps_undo.reg` | 上記の取り消し（要再起動） |
-| `kanata_task.xml` | ログオン時自動起動タスク定義（Exec=GUI版winIOv2） |
+| `kanata_task.xml` | ログオン時自動起動タスク定義の**テンプレート**（Exec=GUI版winIOv2。`<UserId>` は `%%USERSID%%`） |
+| `register_kanata_task.ps1` | 上記に実行中ユーザーの SID を埋めてタスク登録（管理者PowerShell。**別PCでの登録はこれ**） |
 | `set_kanata_gui.ps1` | 登録済みタスクの Exec を GUI版winIOv2 に差し替える（管理者PowerShell） |
 | `kanata.bat` | `kanata.exe --cfg kanata.kbd` 直叩き（旧exe参照。現在未使用） |
 | `run_kanata.bat` | 手動起動用（UAC昇格して `kanata.bat` 実行） |
@@ -153,10 +154,16 @@ ttyd(ブラウザ) の両方で動く。プレフィックスを増やせば nvi
 
 ### 自動起動の管理
 ```
-schtasks /create /tn kanata /xml "C:\bin\yamy\kanata\kanata_task.xml" /f   # 登録(管理者)
+powershell -ExecutionPolicy Bypass -File C:\bin\yamy\kanata\register_kanata_task.ps1  # 登録(管理者)
 schtasks /change /tn yamy /disable                                          # 旧yamy自動起動を無効化
 schtasks /run /tn kanata                                                    # 即起動テスト
 ```
+- **登録は `register_kanata_task.ps1` で行う**（`schtasks /create /xml kanata_task.xml` の直叩きは不可）。
+  `kanata_task.xml` は `<UserId>` を `%%USERSID%%` にしたテンプレートで、そのままでは登録できない。
+  スクリプトが実行中ユーザーの SID を埋めた一時ファイルを作って `schtasks` に渡し、終わったら消す。
+  - 理由: SID はマシン/アカウント固有。他PCの SID が焼き付いたまま登録すると
+    **「このワークステーションとプライマリ ドメインとの信頼関係に失敗しました」**で落ちる。
+    公開リポジトリに勤務先ドメインの識別子を残さない目的も兼ねる。
 - 実行exeだけ差し替えたい時は管理者PowerShellで `set_kanata_gui.ps1`（`Set-ScheduledTask` で Action を更新）。
 - 管理者起動の kanata は非管理者からは kill 不可。停止はトレイアイコン→Exit か、管理者プロンプトで taskkill。
 
