@@ -81,7 +81,7 @@
   grv  2 6 7 8 9 0  -  =  lbrc  rbrc  ;  apos  bksl
   ralt rmet apps
   f13 f14 f15 f16
-  ro
+  ro kprt
 )
 
 (deflayermap (base)
@@ -114,10 +114,15 @@
   rmet  mmid        ;; 右Win → 中クリック
   apps  mrgt        ;; アプリケーションキー → 右クリック
 
-  ;; ろキー(Intl1): 素通しだと kanata と Windows の押下状態がズレ、
-  ;;   "Unexpected keycode is pressed in kanata but not in Windows ... Intl1" 通知が頻発する。
-  ;;   他の記号と同じく unicode 出力にして Intl1 自体を OS へ送らない。
+  ;; kanata v1.12 の押下状態照合(llhook win_synchronize_keystates)は、kanata 内部の
+  ;;   キーコード→VK 変換で GetAsyncKeyState を引く。以下のキーはその VK が Windows の
+  ;;   実 VK と食い違い「押しているのに押されていない」と誤判定され、
+  ;;   "Unexpected keycode is pressed in kanata but not in Windows ..." 通知が出る。
+  ;;   → そのキーコード自体を OS へ出さない割当にして回避する。
+  ;;   ろ(Intl1): kanata は VK 0xC1(ABNT_C1) で照合、JIS の実 VK は 0xE2(OEM_102)
   ro    (fork (unicode r#"\"#) (unicode r#"_"#) (lsft rsft))  ;; ろ → \ / Shift で _
+  ;;   テンキーEnter(KpEnter): kanata は未割当 VK 232(VK_KPENTER_FAKE)で照合＝常に未押下扱い
+  kprt  ret         ;; テンキーEnter → 通常Enter
 
   ;; --- 4キーマクロパッド (ch57x 1189:8890) -------------------------
   ;;   パッド本体には素の F13〜F16 だけを焼いてある。
