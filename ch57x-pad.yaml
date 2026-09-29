@@ -1,0 +1,25 @@
+# Cuifati 4key macro pad (1189:8890)
+#
+# このファームはマクロ列の「先頭キーにしか modifier が効かない」制限があるため、
+# S-f1,S-f2,S-f1 のような列を直接焼くと 2打目以降が素の F1/F2 になる(F1=ヘルプが開く)。
+# → パッドは素の F13〜F16 を出すだけにして、意味付けは kanata.kbd 側で行う。
+#   → 同じ repo の kanata.kbd の deflayermap (base) で f13〜f16 に意味を付けている。
+#     2ファイルは対で運用すること(片方だけ変えると噛み合わない)。
+#
+# 焼き直し:
+#   usbipd.exe attach --wsl --hardware-id 1189:8890
+#   sudo ~/.local/bin/ch57x-keyboard-tool upload < ch57x-pad.yaml
+#   usbipd.exe detach --hardware-id 1189:8890
+model: ch57x-2
+orientation: normal
+rows: 1
+columns: 4
+knobs: 0
+
+layers:
+  - buttons:
+      - - "f13"   # 1: -> kanata: (macro S-f1 S-f2 S-f1)  ClaudePick
+        - "f14"   # 2: -> kanata: (macro S-f1 S-f2 S-f3)  ClaudeAttnSwitch
+        - "f15"   # 3: -> kanata: (mwheel-up   33 120)
+        - "f16"   # 4: -> kanata: (mwheel-down 33 120)
+    knobs: []

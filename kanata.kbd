@@ -80,6 +80,7 @@
   henk mhnk kata
   grv  2 6 7 8 9 0  -  =  lbrc  rbrc  ;  apos  bksl
   ralt rmet apps
+  f13 f14 f15 f16
 )
 
 (deflayermap (base)
@@ -111,6 +112,16 @@
   ralt  mlft        ;; 右Alt → 左クリック
   rmet  mmid        ;; 右Win → 中クリック
   apps  mrgt        ;; アプリケーションキー → 右クリック
+
+  ;; --- 4キーマクロパッド (ch57x 1189:8890) -------------------------
+  ;;   パッド本体には素の F13〜F16 だけを焼いてある。
+  ;;   理由: このファームはマクロ列の「先頭キーにしか modifier が効かない」ため
+  ;;         S-f1,S-f2,S-f1 を直接焼くと 2打目以降が素の F1/F2 になりヘルプが開く。
+  ;;   なので意味付けは全部ここで行う＝割当変更にパッド再書き込みが要らない。
+  f13 (macro S-f1 S-f2 S-f1)   ;; pad1 : 変換+c 相当 → nvim ClaudePick
+  f14 (macro S-f1 S-f2 S-f3)   ;; pad2 : 変換+m 相当 → nvim ClaudeAttnSwitch
+  f15 (mwheel-up   33 120)     ;; pad3 : 変換+u 相当 → ホイール上(押しっぱ連続)
+  f16 (mwheel-down 33 120)     ;; pad4 : 変換+d 相当 → ホイール下
 )
 
 ;; 変換/無変換 を押している間のナビゲーション
