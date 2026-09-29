@@ -81,6 +81,7 @@
   grv  2 6 7 8 9 0  -  =  lbrc  rbrc  ;  apos  bksl
   ralt rmet apps
   f13 f14 f15 f16
+  ro
 )
 
 (deflayermap (base)
@@ -112,6 +113,11 @@
   ralt  mlft        ;; 右Alt → 左クリック
   rmet  mmid        ;; 右Win → 中クリック
   apps  mrgt        ;; アプリケーションキー → 右クリック
+
+  ;; ろキー(Intl1): 素通しだと kanata と Windows の押下状態がズレ、
+  ;;   "Unexpected keycode is pressed in kanata but not in Windows ... Intl1" 通知が頻発する。
+  ;;   他の記号と同じく unicode 出力にして Intl1 自体を OS へ送らない。
+  ro    (fork (unicode r#"\"#) (unicode r#"_"#) (lsft rsft))  ;; ろ → \ / Shift で _
 
   ;; --- 4キーマクロパッド (ch57x 1189:8890) -------------------------
   ;;   パッド本体には素の F13〜F16 だけを焼いてある。
