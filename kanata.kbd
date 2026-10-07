@@ -158,6 +158,7 @@
   m   (macro S-f1 S-f2 S-f3)  ;; 変換+m   → nvim: ClaudeAttnSwitch(N代替)        [F13 F14 F15]
   e   (macro S-f1 S-f3 S-f1)  ;; 変換+e   → nvim: explorer(cwd)で開く            [F13 F15 F13]
   esc (macro S-f1 S-f3 S-f2)  ;; 変換+Esc → nvim: 端末へ literal Esc            [F13 F15 F14]
+  v   (macro S-f1 S-f3 S-f3)  ;; 変換+v   → nvim: 今の md を Vivify で開く       [F13 F15 F15]
   ;; mod0+c(CapsLock)は撤去。JISの英数キー=IMEトグルを兼ねるため日本語に化けるので。
   ;; S-M0-hjkl(行選択)は Shift 物理併用で自動的に S-矢印 になる
 )
@@ -185,6 +186,7 @@
   m   (macro S-f1 S-f2 S-f3)  ;; 無変換+m   → nvim: ClaudeAttnSwitch    [F13 F14 F15]
   e   (macro S-f1 S-f3 S-f1)  ;; 無変換+e   → nvim: explorer(cwd)       [F13 F15 F13]
   esc (macro S-f1 S-f3 S-f2)  ;; 無変換+Esc → nvim: 端末へ literal Esc [F13 F15 F14]
+  v   (macro S-f1 S-f3 S-f3)  ;; 無変換+v   → nvim: 今の md を Vivify  [F13 F15 F15]
 )
 
 ;; 同時押し(chord): f+j を同時に押す → Esc
