@@ -22,6 +22,11 @@
   ;; windows-sync-keystates は撤去。英数→CtrlはScancode Mapで解決済みで保険不要。
   ;; この機能はtap-hold/unicode出力キー(例:\キー)を誤って強制リリースし
   ;; "Releasing in Windows: BACKSLASH" 等のエラーと誤動作を起こすため。
+  ;; エラーのトースト通知を止める(GUI版のみ有効)。v1.12.0 の llhook 押下状態照合が
+  ;;   ろ/NumLockオフのテンキー等で "Unexpected keycode is pressed in kanata but not in Windows"
+  ;;   を誤検出して頻繁に通知するため(実害なし。jtroo/kanata#2115)。
+  ;;   次リリースで `windows-sync-keystates none`(#2122)が使えるようになったら、そちらへ移行してこれは戻す。
+  notify-error no
 )
 
 ;; tap / hold のタイミング(ms)
