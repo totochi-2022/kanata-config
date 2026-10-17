@@ -123,14 +123,18 @@ ttyd(ブラウザ) の両方で動く。プレフィックスを増やせば nvi
 | `kanata_windows_tty_winIOv2_x64.exe` | 旧TTY版（現在未使用） |
 | `caps_to_lctrl.reg` | 英数→LeftCtrl の Scancode Map（要再起動） |
 | `caps_undo.reg` | 上記の取り消し（要再起動） |
-| `kanata_task.xml` | ログオン時自動起動タスク定義の**テンプレート**（Exec=GUI版winIOv2。`<UserId>` は `%%USERSID%%`） |
-| `register_kanata_task.ps1` | 上記に実行中ユーザーの SID を埋めてタスク登録（管理者PowerShell。**別PCでの登録はこれ**） |
+| `kanata_task.xml` | ログオン時自動起動タスク定義の**テンプレート**（Exec=GUI版winIOv2。`<UserId>` は `%%USERSID%%`、配置先は `%%KANATADIR%%`） |
+| `register_kanata_task.ps1` | 上記に実行中ユーザーの SID と配置先（スクリプトのあるフォルダ）を埋めてタスク登録（管理者PowerShell。**別PCでの登録はこれ**） |
 | `set_kanata_gui.ps1` | 登録済みタスクの Exec を GUI版winIOv2 に差し替える（管理者PowerShell） |
 | `kanata.bat` | `kanata.exe --cfg kanata.kbd` 直叩き（旧exe参照。現在未使用） |
 | `run_kanata.bat` | 手動起動用（UAC昇格して `kanata.bat` 実行） |
 | `run_kanata_debug.bat` | デバッグ起動（`kanata_log.txt` に記録） |
 
 ※ `*.exe` は .gitignore で追跡外。別PCではDL元から取得してこの名前にリネームする。
+
+**置き場所は自由**（例: `C:\bin\yamy\kanata` / `C:\bin\kanata`）。bat は `%~dp0`、ps1 は `$PSScriptRoot` で
+自分のあるフォルダを参照し、タスクの配置先は `register_kanata_task.ps1` が登録時に埋める。
+既に登録済みのタスクは登録時のパスを持っているので、フォルダを動かさない限り再登録は不要。
 
 ---
 
@@ -154,7 +158,7 @@ ttyd(ブラウザ) の両方で動く。プレフィックスを増やせば nvi
 
 ### 自動起動の管理
 ```
-powershell -ExecutionPolicy Bypass -File C:\bin\yamy\kanata\register_kanata_task.ps1  # 登録(管理者)
+powershell -ExecutionPolicy Bypass -File <kanataのフォルダ>\register_kanata_task.ps1  # 登録(管理者)
 schtasks /change /tn yamy /disable                                          # 旧yamy自動起動を無効化
 schtasks /run /tn kanata                                                    # 即起動テスト
 ```

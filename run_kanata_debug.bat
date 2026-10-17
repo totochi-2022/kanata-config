@@ -1,1 +1,1 @@
-powershell start-process C:\bin\yamy\kanata\kanata_debug.bat -Verb runas
+powershell start-process '%~dp0kanata_debug.bat' -Verb runas

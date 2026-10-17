@@ -1,9 +1,10 @@
 ﻿# kanata の自動起動タスクを登録する（管理者 PowerShell で実行）。
 #
-#   powershell -ExecutionPolicy Bypass -File C:\bin\yamy\kanata\register_kanata_task.ps1
+#   powershell -ExecutionPolicy Bypass -File <kanataのフォルダ>\register_kanata_task.ps1
 #
-# kanata_task.xml は UserId を %%USERSID%% にしたテンプレート。実行中ユーザーの SID を
-# 埋めた一時ファイルを作って schtasks に食わせ、後で消す。
+# kanata_task.xml は UserId を %%USERSID%%、配置先を %%KANATADIR%% にしたテンプレート。
+# 実行中ユーザーの SID とこのスクリプトのあるフォルダを埋めた一時ファイルを作って
+# schtasks に食わせ、後で消す（置き場所は C:\bin\yamy\kanata でも C:\bin\kanata でも可）。
 # SID をリポジトリに置かないため（public repo に勤務先ドメインの識別子を出さない）と、
 # 別PCでそのまま使えるようにするための仕組み。
 
@@ -16,11 +17,11 @@ $sid  = [System.Security.Principal.WindowsIdentity]::GetCurrent().User.Value
 # schtasks は UTF-16LE+BOM の XML しか受け付けない（UTF-8 だと弾かれる）ので
 # 読みも書きも Unicode(=UTF-16LE) で通す。
 $tmp = Join-Path $env:TEMP 'kanata_task.generated.xml'
-$xml = (Get-Content $tpl -Raw -Encoding Unicode).Replace('%%USERSID%%', $sid)
+$xml = (Get-Content $tpl -Raw -Encoding Unicode).Replace('%%USERSID%%', $sid).Replace('%%KANATADIR%%', $here)
 Set-Content -Path $tmp -Value $xml -Encoding Unicode -NoNewline
 
 try {
-    Write-Host "UserId = $sid で登録します"
+    Write-Host "UserId = $sid / 配置先 = $here で登録します"
     schtasks /create /tn kanata /xml $tmp /f
 } finally {
     Remove-Item $tmp -ErrorAction SilentlyContinue

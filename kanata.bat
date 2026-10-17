@@ -1,1 +1,1 @@
-C:\bin\yamy\kanata\kanata.exe --cfg C:\bin\yamy\kanata\kanata.kbd
+"%~dp0kanata.exe" --cfg "%~dp0kanata.kbd"
