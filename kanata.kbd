@@ -18,7 +18,7 @@
 (defcfg
   process-unmapped-keys yes   ;; defsrc に無いキーは素通り
   concurrent-tap-hold yes     ;; SandS 等のロール入力を成立させる
-  danger-enable-cmd no        ;; 外部コマンド実行は無効（安全側）
+  danger-enable-cmd yes       ;; 外部コマンド実行を許可（cmd_allowed ビルド必須。変換/無変換+クリック・Enter の clipopen 用）
   ;; windows-sync-keystates は撤去。英数→CtrlはScancode Mapで解決済みで保険不要。
   ;; この機能はtap-hold/unicode出力キー(例:\キー)を誤って強制リリースし
   ;; "Releasing in Windows: BACKSLASH" 等のエラーと誤動作を起こすため。
@@ -44,7 +44,7 @@
   ;; tap は IMEキー＋「IME状態マーカー」を nvim へ送る(状態表示用・全部ファンクションキー)。
   ;;   変換=toggle → S-f9(<F21>/<S-F9>) / 無変換=OFF → S-f8(<F20>/<S-F8>) / カナ=ON → S-f7(後で追加)
   m0h (tap-hold $tt $ht (macro henk S-f9) (layer-while-held nav))        ;; 変換  : tap=変換(IME toggle)+marker / hold=nav
-  m0m (tap-hold $tt $ht (macro mhnk S-f8) (layer-while-held nav2))   ;; 無変換: tap=無変換(IME OFF)+marker(S-f8=F20)。Escは送らずnvim側でF20受信時にstopinsert+補完消し(他アプリへの副作用回避)
+  m0m (tap-hold $tt $ht (macro mhnk S-f8) (layer-while-held nav))    ;; 無変換: hold=nav(変換と同じ) / tap=無変換(IME OFF)+marker(S-f8=F20)。Escは送らずnvim側でF20受信時にstopinsert+補完消し(他アプリへの副作用回避)
 
   ;; --- 記号 JIS→US (104on109.mayu の def subst 相当) ---
   ;;     (fork 通常 シフト時 (lsft rsft)) でシフト状態に応じて出し分け。
@@ -69,6 +69,9 @@
   bsl (fork (unicode r#"\"#) (unicode r#"|"#) (lsft rsft))
   col (tap-hold $tt $ht @apo lctl)
   brk (tap-hold $tt $ht @bsl lalt)
+
+  ;; --- 変換/無変換+Enter: WT で選択中の文字列をコピーして clipopen で開く(nav レイヤ) ---
+  opn (macro C-S-c 100 (cmd wsl.exe -e /home/motoki/.local/bin/clipopen))
 )
 
 ;; カナ(カタカナ/ひらがな)キー: winIOv2 バイナリ + deflocalkeys-winiov2 で掴む。
@@ -85,6 +88,7 @@
   henk mhnk kata
   grv  2 6 7 8 9 0  -  =  lbrc  rbrc  ;  apos  bksl
   ralt rmet apps
+  mlft              ;; 変換/無変換+クリック用。マウス入力の追加/削除は kanata 再起動が必要(リロードでは効かない)
   f13 f14 f15 f16
   ro kprt
 )
@@ -164,35 +168,22 @@
   e   (macro S-f1 S-f3 S-f1)  ;; 変換+e   → nvim: explorer(cwd)で開く            [F13 F15 F13]
   esc (macro S-f1 S-f3 S-f2)  ;; 変換+Esc → nvim: 端末へ literal Esc            [F13 F15 F14]
   v   (macro S-f1 S-f3 S-f3)  ;; 変換+v   → nvim: 今の md を Vivify で開く       [F13 F15 F15]
+  ;; 変換+Enter → WT で選択中の文字列を Ctrl+Shift+C でコピー → WSL の clipopen が中からパス/URL を
+  ;;          切り出して開く(ファイル=Vivify、URL=ブラウザ。相対パスは非対応)。選択は手で行う(自動クリックは不安定だった)。
+  ;;          nvim の中はマウスを nvim が取るので、そちらは nvim の Ctrl+クリック(21_keymap.lua)を使う。
+  ;;          ★(推測) winIOv2 は VK で読むので、メインの Enter も kprt(テンキーEnter) として届く(defsrc に kprt が
+  ;;            あるため)。ret だけ割り当てると効かず、base の kprt→ret が素通りして WT の「Enter でコピー」だけ起きた。
+  ;;            → ret と kprt の両方に割り当てる。
+  ret  @opn
+  kprt @opn
+  ;; 変換/無変換+クリック → その位置を3連クリック(WT が行を選択) → Ctrl+Shift+C でコピー → clipopen(中身は @opn と同じ。macro は入れ子不可なので展開)。
+  ;;   行の中からパス/URL を切り出すので、行内のどこをクリックしてもよい。間隔 50ms(30ms は単語選択に化けた)。
+  mlft (macro mlft 50 mlft 50 mlft 100 C-S-c 100 (cmd wsl.exe -e /home/motoki/.local/bin/clipopen))
   ;; mod0+c(CapsLock)は撤去。JISの英数キー=IMEトグルを兼ねるため日本語に化けるので。
   ;; S-M0-hjkl(行選択)は Shift 物理併用で自動的に S-矢印 になる
 )
 
-;; 無変換 を押している間: hjkl を F13-F16 に（nvim側で <C-w>hjkl=窓移動 に割当）
-;;   F13+ は物理キーに無い＝他アプリと衝突しない“nvim専用チャンネル”。
-;; プレフィックスに Shift+F1 を送る。1つの送出で両端末カバー:
-;;   WT   → nvim には <F13> として届く（Shift+F1 の系列を F13 と解釈）
-;;   ttyd → nvim には <S-F1> として届く
-;; nvim側で <F13>h と <S-F1>h の両方を割当てておけば、どちらでも窓移動。
-(deflayermap (nav2)
-  h  (macro S-f1 h) ;; nvim: <F13>h / <S-F1>h → 左窓
-  j  (macro S-f1 j) ;; nvim: <F13>j / <S-F1>j → 下窓
-  k  (macro S-f1 k) ;; nvim: <F13>k / <S-F1>k → 上窓
-  l  (macro S-f1 l) ;; nvim: <F13>l / <S-F1>l → 右窓
-  o  A-tab          ;; ウィンドウ切替（変換側と同じ）
-  i  A-S-tab        ;; 逆方向
-  r  lrld           ;; 設定リロード
-  ;; マウスホイール（変換側と鏡写し）: 無変換+u/d でポインタ下をスクロール
-  u  (mwheel-up   33 120)  ;; 無変換+u : ホイール上(押しっぱ連続)
-  d  (mwheel-down 33 120)  ;; 無変換+d : ホイール下
-  ;; 変換側と鏡写し。F13〜F15 の3打(全ファンクションキー)=IME/ブラウザ無敵。
-  c   (macro S-f1 S-f2 S-f1)  ;; 無変換+c   → nvim: ClaudePick          [F13 F14 F13]
-  n   (macro S-f1 S-f2 S-f2)  ;; 無変換+n   → nvim: ClaudeAttnFocus     [F13 F14 F14]
-  m   (macro S-f1 S-f2 S-f3)  ;; 無変換+m   → nvim: ClaudeAttnSwitch    [F13 F14 F15]
-  e   (macro S-f1 S-f3 S-f1)  ;; 無変換+e   → nvim: explorer(cwd)       [F13 F15 F13]
-  esc (macro S-f1 S-f3 S-f2)  ;; 無変換+Esc → nvim: 端末へ literal Esc [F13 F15 F14]
-  v   (macro S-f1 S-f3 S-f3)  ;; 無変換+v   → nvim: 今の md を Vivify  [F13 F15 F15]
-)
+;; 無変換 hold も nav（変換と同じ動き）。旧 nav2(無変換+hjkl=nvim窓移動)は 2026-10-22 に廃止。
 
 ;; 同時押し(chord): f+j を同時に押す → Esc
 ;;   50ms以内に両方押されたら成立。all-released=両方離すまで保持。

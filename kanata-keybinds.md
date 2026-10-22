@@ -15,14 +15,14 @@ yamy(`.mayu` / `104on109.mayu`)からの移植。**OS は JIS(109) のまま**�
 |---|---|---|
 | 英数 (CapsLock) | — | **左Ctrl** （OS層 / Scancode Map） |
 | Space | 空白 | **Shift** （SandS） |
-| 変換 | 変換 (IME) | **nav（矢印）** |
-| 無変換 | 無変換(IMEオフ) + **Esc** | **nav2（nvim窓移動）** |
+| 変換 | 変換 (IME) | **nav** |
+| 無変換 | 無変換(IMEオフ) | **nav**（変換と同じ） |
 | `:` キー | `'` / `"` | **Ctrl** |
 | `]` キー | `\` / `\|` | **Alt** |
 
 ---
 
-## nav レイヤ（**変換** を押しながら）＝矢印
+## nav レイヤ（**変換 / 無変換** を押しながら。2026-10-22 に nav2 を廃止して共通化）
 
 | キー | 動作 |
 |---|---|
@@ -31,18 +31,14 @@ yamy(`.mayu` / `104on109.mayu`)からの移植。**OS は JIS(109) のまま**�
 | `o` | ウィンドウ切替（Alt+Tab） |
 | `i` | 逆方向（Alt+Shift+Tab） |
 | `r` | kanata 設定リロード |
+| `u` / `d` | ポインタ下をホイール上 / 下（押しっぱで連続） |
+| `c` `n` `m` `e` `Esc` `v` | nvim 用（F13〜F15 の 3 打）: ClaudePick / Claude待ちへ / Claude待ちを現窓に / explorer / 端末へ Esc / 今の md を Vivify |
+| **クリック** | **その行のパス/URL を開く**（3 連クリックで行選択 → Ctrl+Shift+C → `clipopen`。md 等=Vivify、URL=ブラウザ） |
+| `Enter` | WT で手で選択した文字列のパス/URL を開く（Ctrl+Shift+C → `clipopen`） |
 
-## nav2 レイヤ（**無変換** を押しながら）＝nvim ウィンドウ移動
-
-| キー | 動作 |
-|---|---|
-| `h` `j` `k` `l` | nvim の左 / 下 / 上 / 右ウィンドウへ |
-| `o` | ウィンドウ切替（Alt+Tab） |
-| `i` | 逆方向（Alt+Shift+Tab） |
-| `r` | kanata 設定リロード |
-
-> 無変換+hjkl は kanata が「Shift+F1 → 文字」を送出し、nvim で `<F13>h` / `<S-F1>h`（端末差を吸収）を
-> `<C-w>h` 等に割当てて実現。F13系は物理キーに無い＝**他アプリ非干渉**、Windows Terminal と ttyd(ブラウザ) の両対応。
+> クリック・Enter は `(cmd ...)` を使うので **cmd 対応ビルド**（`kanata_v112_gui_winIOv2_cmd.exe`）＋`danger-enable-cmd yes` が必須。
+> `clipopen` の実体は WSL の `~/.claude_plugin/scripts/clipopen`、動作ログは `~/.cache/clipopen.log`。
+> マウス（`mlft`）を defsrc に入れているので、マウス入力の追加/削除は**リロード不可・kanata 再起動が必要**。
 
 ---
 

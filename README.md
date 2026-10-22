@@ -67,8 +67,8 @@
 |---|---|
 | 英数(CapsLock) | **左Ctrl**（Scancode Mapで実現。kanata管轄外） |
 | Space | **SandS**（タップ=空白 / 長押し=Shift） |
-| 変換 | タップ=変換(IME) / 長押し=nav(矢印) |
-| 無変換 | タップ=無変換(IMEオフ)+Esc / 長押し=nav2(nvim窓移動) |
+| 変換 | タップ=変換(IME) / 長押し=nav |
+| 無変換 | タップ=無変換(IMEオフ) / 長押し=nav（変換と同じ） |
 | `:`キー | タップ=`'`/`"` / 長押し=Ctrl |
 | `]`キー | タップ=`\`/`\|` / 長押し=Alt |
 | 右Alt | 左クリック |
@@ -86,24 +86,9 @@
 | `[`キー | `]` | `}` |
 | `;`キー | `;` | `:` |
 
-### nav レイヤ（**変換**を押している間）＝矢印
-| キー | 動作 |
-|---|---|
-| h / j / k / l | ← / ↓ / ↑ / → |
-| Shift + hjkl | 範囲選択（Shift物理併用で自動的にShift+矢印） |
-| o / i | ウィンドウ切替 / 逆方向 |
-| r | 設定リロード |
-
-### nav2 レイヤ（**無変換**を押している間）＝nvim ウィンドウ移動
-| キー | 動作 |
-|---|---|
-| h / j / k / l | nvim の左/下/上/右ウィンドウへ |
-| o / i | ウィンドウ切替 / 逆方向 |
-| r | 設定リロード |
-
-無変換+hjkl は kanata が「Shift+F1 → 文字」を送り、nvim側で `<F13>h` / `<S-F1>h`（端末差を吸収）を
-`<C-w>h` 等に割当てて実現。F13系は物理キーに無い＝**他アプリ非干渉**で、Windows Terminal と
-ttyd(ブラウザ) の両方で動く。プレフィックスを増やせば nvim 専用チャンネルを無限に拡張可能。
+### nav レイヤ（**変換 / 無変換**を押している間）
+キー一覧は [kanata-keybinds.md](kanata-keybinds.md)。2026-10-22 に nav2（無変換＝nvim 窓移動）を廃止し、無変換も nav にした。
+無変換/変換+**クリック**・**Enter** で端末に出たパスを開く（`cmd` アクション使用＝cmd 対応ビルド必須）。
 
 ### 同時押し(chord)
 | 入力 | 動作 |
@@ -117,7 +102,8 @@ ttyd(ブラウザ) の両方で動く。プレフィックスを増やせば nvi
 | ファイル | 役割 |
 |---|---|
 | `kanata.kbd` | kanata設定本体 |
-| `kanata_v112_gui_winIOv2.exe` | **常駐の実体**（v1.12 GUI winIOv2。自動起動タスクが直接実行。消さない） |
+| `kanata_v112_gui_winIOv2_cmd.exe` | **cmd 対応版**（公式 v1.12.0 `kanata_windows_gui_winIOv2_cmd_allowed_x64.exe`）。今の kbd は `danger-enable-cmd yes` なのでこれでないと読めない |
+| `kanata_v112_gui_winIOv2.exe` | 旧・常駐の実体（cmd 非対応。今の kbd は `NOT reloaded` になる）。**自動起動タスクの Exec はまだこれ → `_cmd.exe` に要変更（管理者）** |
 | `kanata_v112_winIOv2.exe` | TTY版 v1.12 winIOv2（`--debug` でログ確認用） |
 | `kanata.exe` | 旧・常駐用（v1.11相当 GUI winIOv2。現在未使用） |
 | `kanata_windows_tty_winIOv2_x64.exe` | 旧TTY版（現在未使用） |
