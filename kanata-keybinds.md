@@ -34,9 +34,9 @@ yamy(`.mayu` / `104on109.mayu`)からの移植。**OS は JIS(109) のまま**�
 | `u` / `d` | ポインタ下をホイール上 / 下（押しっぱで連続） |
 | `c` `n` `m` `e` `Esc` `v` | nvim 用（F13〜F15 の 3 打）: ClaudePick / Claude待ちへ / Claude待ちを現窓に / explorer / 端末へ Esc / 今の md を Vivify |
 | **クリック** | **その行のパス/URL を開く**（3 連クリックで行選択 → Ctrl+Shift+C → `clipopen`。md 等=Vivify、URL=ブラウザ） |
-| `Enter` | WT で手で選択した文字列のパス/URL を開く（Ctrl+Shift+C → `clipopen`） |
+| `g` | WT で手で選択した文字列のパス/URL を開く（Ctrl+Shift+C → `clipopen`）。Enter は不安定だったので不採用 |
 
-> クリック・Enter は `(cmd ...)` を使うので **cmd 対応ビルド**（`kanata_v112_gui_winIOv2_cmd.exe`）＋`danger-enable-cmd yes` が必須。
+> クリック・`g` は `(cmd ...)` を使うので **cmd 対応ビルド**（`kanata_v112_gui_winIOv2_cmd.exe`）＋`danger-enable-cmd yes` が必須。
 > `clipopen` の実体は WSL の `~/.claude_plugin/scripts/clipopen`、動作ログは `~/.cache/clipopen.log`。
 > マウス（`mlft`）を defsrc に入れているので、マウス入力の追加/削除は**リロード不可・kanata 再起動が必要**。
 

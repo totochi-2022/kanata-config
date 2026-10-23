@@ -4,7 +4,13 @@
 ハマった問題・原因・対策と、最終的な構成をまとめる。
 
 - 対象環境: Windows + 日本語(JIS 106/109)キーボード
-- kanata: **v1.12.0 GUI版・winIOv2 ビルド**（`kanata_v112_gui_winIOv2.exe`）
+- kanata: **v1.12.0 GUI版・winIOv2・cmd 対応ビルド**（`kanata_v112_gui_winIOv2_cmd.exe`）
+  - **★ cmd 対応ビルド必須**（2026-10-23〜）: kbd が `danger-enable-cmd yes`（変換/無変換+クリック・g の `clipopen` 用）なので、
+    通常ビルドでは読めない（`NOT reloaded`／起動失敗）。exe は git 管理外なので **PC ごとに用意する**:
+    1. https://github.com/jtroo/kanata/releases/tag/v1.12.0 の `windows-binaries-x64.zip` から
+       `kanata_windows_gui_winIOv2_cmd_allowed_x64.exe` を取り出し、`kanata_v112_gui_winIOv2_cmd.exe` にリネームしてこのフォルダへ
+    2. 管理者 PowerShell で `register_kanata_task.ps1`（`kanata_task.xml` の起動先が `_cmd.exe`）→ 自動起動タスクを作り直す
+    3. WSL 側に `~/.local/bin/clipopen`（claude-plugin-system の `install.sh` で symlink される）
   - DL元: https://github.com/jtroo/kanata/releases → `kanata_gui_winIOv2.exe` 系アセット
   - **winIOv2 必須**: カナ(カタカナ/ひらがな)キーは LLHOOK 標準ビルドでは原理的に捕捉できない。
     winIOv2 ビルド＋`(deflocalkeys-winiov2 kata 241)`（VK_DBE_KATAKANA=0xF1）で捕捉している（kanata issue #1870 / PR #1893 参照）。
@@ -88,7 +94,7 @@
 
 ### nav レイヤ（**変換 / 無変換**を押している間）
 キー一覧は [kanata-keybinds.md](kanata-keybinds.md)。2026-10-22 に nav2（無変換＝nvim 窓移動）を廃止し、無変換も nav にした。
-無変換/変換+**クリック**・**Enter** で端末に出たパスを開く（`cmd` アクション使用＝cmd 対応ビルド必須）。
+無変換/変換+**クリック**・**g** で端末に出たパスを開く（`cmd` アクション使用＝cmd 対応ビルド必須）。
 
 ### 同時押し(chord)
 | 入力 | 動作 |
@@ -102,8 +108,8 @@
 | ファイル | 役割 |
 |---|---|
 | `kanata.kbd` | kanata設定本体 |
-| `kanata_v112_gui_winIOv2_cmd.exe` | **cmd 対応版**（公式 v1.12.0 `kanata_windows_gui_winIOv2_cmd_allowed_x64.exe`）。今の kbd は `danger-enable-cmd yes` なのでこれでないと読めない |
-| `kanata_v112_gui_winIOv2.exe` | 旧・常駐の実体（cmd 非対応。今の kbd は `NOT reloaded` になる）。**自動起動タスクの Exec はまだこれ → `_cmd.exe` に要変更（管理者）** |
+| `kanata_v112_gui_winIOv2_cmd.exe` | **常駐の実体・cmd 対応版**（自動起動タスクが直接実行）（公式 v1.12.0 `kanata_windows_gui_winIOv2_cmd_allowed_x64.exe`）。今の kbd は `danger-enable-cmd yes` なのでこれでないと読めない |
+| `kanata_v112_gui_winIOv2.exe` | 旧・常駐の実体（cmd 非対応。今の kbd は読めない＝`NOT reloaded`）。自動起動は `_cmd.exe` に切替（`kanata_task.xml`） |
 | `kanata_v112_winIOv2.exe` | TTY版 v1.12 winIOv2（`--debug` でログ確認用） |
 | `kanata.exe` | 旧・常駐用（v1.11相当 GUI winIOv2。現在未使用） |
 | `kanata_windows_tty_winIOv2_x64.exe` | 旧TTY版（現在未使用） |
