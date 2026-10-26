@@ -169,6 +169,7 @@
   esc (macro S-f1 S-f3 S-f2)  ;; 変換+Esc → nvim: 端末へ literal Esc            [F13 F15 F14]
   v   (macro S-f1 S-f3 S-f3)  ;; 変換+v   → nvim: 今の md を Vivify で開く       [F13 F15 F15]
   b   (macro S-f1 S-f1 S-f1)  ;; 変換+b   → nvim: Claude の右 dock 差分⇔Board   [F13 F13 F13]
+  ;   (macro S-f1 S-f1 S-f2)  ;; 変換+;   → nvim: 過去の会話・日記を検索 :CCSearch [F13 F13 F14]
   ;; 変換+g → WT で選択中の文字列を Ctrl+Shift+C でコピー → WSL の clipopen が中からパス/URL を
   ;;          切り出して開く(ファイル=Vivify、URL=ブラウザ。相対パスは非対応)。選択は手で行う(自動クリックは不安定だった)。
   ;;          nvim の中はマウスを nvim が取るので、そちらは nvim の Ctrl+クリック(21_keymap.lua)を使う。
