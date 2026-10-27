@@ -118,7 +118,7 @@
 | `kanata_task.xml` | ログオン時自動起動タスク定義の**テンプレート**（Exec=GUI版winIOv2。`<UserId>` は `%%USERSID%%`、配置先は `%%KANATADIR%%`） |
 | `register_kanata_task.ps1` | 上記に実行中ユーザーの SID と配置先（スクリプトのあるフォルダ）を埋めてタスク登録（管理者PowerShell。**別PCでの登録はこれ**） |
 | `set_kanata_gui.ps1` | 登録済みタスクの Exec を GUI版winIOv2 に差し替える（管理者PowerShell） |
-| `kanata.bat` | `kanata.exe --cfg kanata.kbd` 直叩き（旧exe参照。現在未使用） |
+| `kanata.bat` | `kanata_v112_gui_winIOv2_cmd.exe --cfg kanata.kbd` 直叩き（`run_kanata.bat` から呼ばれる。2026-10-27 に起動先を cmd 対応版へ修正） |
 | `run_kanata.bat` | 手動起動用（UAC昇格して `kanata.bat` 実行） |
 | `run_kanata_debug.bat` | デバッグ起動（`kanata_log.txt` に記録） |
 
