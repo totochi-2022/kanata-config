@@ -168,7 +168,9 @@
   e   (macro S-f1 S-f3 S-f1)  ;; 変換+e   → nvim: explorer(cwd)で開く            [F13 F15 F13]
   esc (macro S-f1 S-f3 S-f2)  ;; 変換+Esc → nvim: 端末へ literal Esc            [F13 F15 F14]
   v   (macro S-f1 S-f3 S-f3)  ;; 変換+v   → nvim: 今の md を Vivify で開く       [F13 F15 F15]
-  b   (macro S-f1 S-f1 S-f1)  ;; 変換+b   → nvim: Claude の右 dock 差分⇔Board   [F13 F13 F13]
+  ;; 変換+b は先に IME OFF(無変換キーだけ。marker の S-f8 は送らない＝nvim が端末モードを抜けてしまうため)。
+  ;; Board へ移った直後に j/k・x・数字がそのまま届くように
+  b   (macro mhnk S-f1 S-f1 S-f1)  ;; 変換+b   → IME OFF + nvim: Claude の右 dock 差分⇔Board   [無変換 F13 F13 F13]
   ;   (macro S-f1 S-f1 S-f2)  ;; 変換+;   → nvim: 過去の会話・日記を検索 :CCSearch [F13 F13 F14]
   s   (macro S-f1 S-f1 S-f2)  ;; 変換+s   → 同上(search)
   /   (macro S-f1 S-f1 S-f3)  ;; 変換+/   → nvim: `:CCSearch ` を出して入力待ち(語 / web)  [F13 F13 F15]
